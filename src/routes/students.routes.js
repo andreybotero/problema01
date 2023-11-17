@@ -1,21 +1,19 @@
 import { Router } from "express";
 
 import {
+  getStudents,
+  getStudent,
   createStudent,
-  deleteStudent,
-  findStudent,
-  getAllStudents,
   updateStudent,
+  deleteStudent,
 } from "../controllers/students.controller.js";
 
+const studentsRouter = Router();
 
-const studentsRouts = Router();
+studentsRouter.get("/", getStudents);
+studentsRouter.get("/:id", getStudent);
+studentsRouter.post("/", createStudent);
+studentsRouter.put("/:id", updateStudent);
+studentsRouter.delete("/:id", deleteStudent);
 
-studentsRouts.get("/", getAllStudents);
-studentsRouts.get("/:id", findStudent);
-studentsRouts.post("/", createStudent);
-studentsRouts.put("/:id", updateStudent);
-studentsRouts.delete("/:id", deleteStudent);
-
-
-export default studentsRouts;
+export default studentsRouter;

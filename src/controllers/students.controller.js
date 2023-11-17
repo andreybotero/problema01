@@ -1,46 +1,54 @@
-export const getStudents = async (req, res) => {
-  return res.status(200).send({ mensagem: "Get all studants" });
-};
+import { StudentsRepository } from "../models/students/StudentsRepository.js";
+import { Student } from "../models/students/Student.js";
 
-export const getStudentById = async (req, res) => {
-  const { id } = req.params;
-  return res.status(200).send({ mensagem: `Get student with id: ${id}` });
-};
+const studentsRepository = new StudentsRepository();
 
-export const createStudent = async (req, res) => {
-  const { name, email, age } = req.body;
-
-  age >= 18
-    ? res.status(201).send({ mensagem: `Aluno com idade menor a 18 anos` })
-    : res.status(201).send({ mensagem: `Aluno com idade maior a 18 anos` });
-
-    if (!name || !email || !age) {
-        return res.status(400).send({ mensagem: "Missing required fields" });
-        }
-
-    return res.status(200).send({
-    mensagem: `Create student with name: ${name}, email: ${email} and age: ${age}`,
-    });
-      
-};
-
-export const updateStudent = async (req, res) => {
-  const { id } = req.params;
-  const { name, email, age } = req.body;
-
-  if (!name || !email || !age) {
-    return res.status(400).send({ mensagem: "Missing required fields" });
+export const getStudents = (req, res) => {
+  const students = studentsRepository.getStudents();
+  if (students.length) {
+    return res.status(200).json(students);
   }
-
-  return res.status(200).send({
-    mensagem: `Update student with id: ${id} with name: ${name}, email: ${email} and age: ${age}`,
-  });
+  return res.status(200).json({ message: "Não há estudantes cadastrados" });
 };
 
-export const deleteStudent = async (req, res) => {
+export const getStudent = (req, res) => {
   const { id } = req.params;
+  const student = studentsRepository.getStudentById(id);
 
-  return res.status(200).send({
-    mensagem: `Delete student with id: ${id}`,
-  });
+  if (!student) res.status(404).send({ message: "Estudante não encontrado!" });
+
+  return res.send(student);
+};
+
+export const createStudent = (req, res) => {
+  const { name, age } = req.body;
+  const student = new Student(name, age);
+
+  studentsRepository.addStudent(student);
+
+  return res.status(201).send(student);
+};
+
+export const updateStudent = (req, res) => {
+  const { id } = req.params;
+  const { name, age } = req.body;
+
+  const student = studentsRepository.getStudentById(id);
+
+  if (!student) res.status(404).send({ message: "Estudante não encontrado!" });
+
+  studentsRepository.updateStudent(id, name, age);
+
+  return res.send(student);
+};
+
+export const deleteStudent = (req, res) => {
+  const { id } = req.params;
+  const student = studentsRepository.getStudentById(id);
+
+  if (!student) res.status(404).send({ message: "Estudante não encontrado!" });
+
+  studentsRepository.deleteStudent(id);
+
+  return res.send(student);
 };

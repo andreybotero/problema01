@@ -1,18 +1,14 @@
 import { Router } from "express";
-import studentsRouts from "./students.routes.js";
-import courseRoutes from "./course.routes.js"
+import studentsRouter from "./students.routes.js";
+import usersRouter from "./users.routes.js";
 
+const router = Router();
 
-const rotas = Router();
-
-rotas.use("/students", studentsRouts);
-
-rotas.use("/course", courseRoutes)
-
-rotas.get("/", (req, res) => {
-  return res.status(200).send({ mensagem: "Servidor OK" });
+router.get("/", (req, res) => {
+  res.status(200).send({ message: "Servidor rodando perfeitamente!" });
 });
 
+router.use("/students", studentsRouter);
+router.use("/users", usersRouter);
 
-
-export default rotas;
+export { router };
